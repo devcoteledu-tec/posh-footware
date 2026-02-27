@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { motion } from 'motion/react';
-import { ArrowLeft, Filter, Loader2, Star } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { ArrowLeft, Filter, Loader2, Star, X, MapPin, Phone, User, Send } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
@@ -16,18 +16,141 @@ interface Product {
   sizes_available?: string[];
 }
 
+const CheckoutModal = ({ product, isOpen, onClose }: { product: Product | null, isOpen: boolean, onClose: () => void }) => {
+  const [formData, setFormData] = useState({
+    name: '',
+    mobile: '',
+    location: '',
+    pincode: ''
+  });
+
+  if (!product) return null;
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const message = `*New Order from Posh!*%0A%0A` +
+      `*Product Details:*%0A` +
+      `- Name: ${product.model_name}%0A` +
+      `- Price: ${product.price}%0A` +
+      `- Category: ${product.category}%0A%0A` +
+      `*Customer Details:*%0A` +
+      `- Name: ${formData.name}%0A` +
+      `- Mobile: ${formData.mobile}%0A` +
+      `- Location: ${formData.location}%0A` +
+      `- Pincode: ${formData.pincode}`;
+
+    const whatsappUrl = `https://wa.me/917593038781?text=${message}`;
+    window.open(whatsappUrl, '_blank');
+    onClose();
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            className="relative w-full max-w-md bg-white rounded-3xl overflow-hidden shadow-2xl"
+          >
+            <div className="p-8">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-display tracking-tight">Checkout</h2>
+                <button onClick={onClose} className="p-2 hover:bg-zinc-100 rounded-full transition-colors">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="flex items-center space-x-4 mb-8 p-4 bg-zinc-50 rounded-2xl">
+                <img src={product.image_url} alt={product.model_name} className="w-16 h-16 object-cover rounded-xl" />
+                <div>
+                  <h3 className="font-bold uppercase text-sm">{product.model_name}</h3>
+                  <p className="text-xl font-display">{product.price}</p>
+                </div>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="relative">
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                  <input
+                    required
+                    type="text"
+                    placeholder="Full Name"
+                    className="w-full pl-12 pr-4 py-4 bg-zinc-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black/5 transition-all"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  />
+                </div>
+                <div className="relative">
+                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                  <input
+                    required
+                    type="tel"
+                    placeholder="Mobile Number"
+                    className="w-full pl-12 pr-4 py-4 bg-zinc-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black/5 transition-all"
+                    value={formData.mobile}
+                    onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
+                  />
+                </div>
+                <div className="relative">
+                  <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                  <input
+                    required
+                    type="text"
+                    placeholder="Location / Address"
+                    className="w-full pl-12 pr-4 py-4 bg-zinc-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black/5 transition-all"
+                    value={formData.location}
+                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                  />
+                </div>
+                <div className="relative">
+                  <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                  <input
+                    required
+                    type="text"
+                    placeholder="Pincode"
+                    className="w-full pl-12 pr-4 py-4 bg-zinc-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black/5 transition-all"
+                    value={formData.pincode}
+                    onChange={(e) => setFormData({ ...formData, pincode: e.target.value })}
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full mt-4 py-4 bg-black text-white rounded-xl font-bold uppercase tracking-widest text-xs flex items-center justify-center space-x-2 hover:bg-zinc-800 transition-colors"
+                >
+                  <span>Confirm via WhatsApp</span>
+                  <Send className="w-4 h-4" />
+                </button>
+              </form>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+};
+
 const Products = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const mockProducts: Product[] = [
-    { id: 1, model_name: 'Posh One', price: '$240', category: 'Performance', image_url: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2070', star_rating: 4.8, stock_quantity: 12 },
-    { id: 2, model_name: 'Stealth Runner', price: '$180', category: 'Lifestyle', image_url: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=1974', star_rating: 4.5, stock_quantity: 8 },
-    { id: 3, model_name: 'Urban Edge', price: '$210', category: 'Urban', image_url: 'https://images.unsplash.com/photo-1552346154-21d32810aba3?q=80&w=2070', star_rating: 4.2, stock_quantity: 15 },
-    { id: 4, model_name: 'Cloud Walker', price: '$260', category: 'Performance', image_url: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=1974', star_rating: 4.9, stock_quantity: 5 },
-    { id: 5, model_name: 'Midnight Pro', price: '$290', category: 'Limited', image_url: 'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?q=80&w=1925', star_rating: 4.7, stock_quantity: 3 },
-    { id: 6, model_name: 'Vortex Max', price: '$195', category: 'Lifestyle', image_url: 'https://images.unsplash.com/photo-1512374382149-4332c6c021f1?q=80&w=1915', star_rating: 4.4, stock_quantity: 20 },
+    { id: 1, model_name: 'Posh One', price: '₹19,999', category: 'Performance', image_url: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2070', star_rating: 4.8, stock_quantity: 12 },
+    { id: 5, model_name: 'Midnight Pro', price: '₹24,999', category: 'Limited', image_url: 'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?q=80&w=1925', star_rating: 4.7, stock_quantity: 3 },
+    { id: 6, model_name: 'Vortex Max', price: '₹16,499', category: 'Lifestyle', image_url: 'https://images.unsplash.com/photo-1512374382149-4332c6c021f1?q=80&w=1915', star_rating: 4.4, stock_quantity: 20 },
   ];
 
   useEffect(() => {
@@ -123,7 +246,7 @@ const Products = () => {
                     </div>
                   </div>
                   <p className="font-display text-xl">
-                    {typeof product.price === 'number' ? `$${product.price}` : product.price}
+                    {typeof product.price === 'number' ? `₹${product.price}` : product.price}
                   </p>
                 </div>
                 {product.sizes_available && product.sizes_available.length > 0 && (
@@ -135,11 +258,29 @@ const Products = () => {
                     ))}
                   </div>
                 )}
+                
+                <motion.button 
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    setSelectedProduct(product);
+                    setIsModalOpen(true);
+                  }}
+                  className="w-full mt-6 py-3 bg-black text-white text-[10px] font-bold uppercase tracking-[0.2em] rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-lg shadow-black/10"
+                >
+                  SHOP NOW
+                </motion.button>
               </motion.div>
             ))}
           </div>
         )}
       </div>
+
+      <CheckoutModal 
+        product={selectedProduct} 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </div>
   );
 };
