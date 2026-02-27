@@ -149,6 +149,9 @@ const Products = () => {
 
   const mockProducts: Product[] = [
     { id: 1, model_name: 'Posh One', price: '₹19,999', category: 'Performance', image_url: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2070', star_rating: 4.8, stock_quantity: 12 },
+    { id: 2, model_name: 'Stealth Runner', price: '₹14,999', category: 'Lifestyle', image_url: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=1974', star_rating: 4.5, stock_quantity: 8 },
+    { id: 3, model_name: 'Urban Edge', price: '₹17,499', category: 'Urban', image_url: 'https://images.unsplash.com/photo-1552346154-21d32810aba3?q=80&w=2070', star_rating: 4.2, stock_quantity: 15 },
+    { id: 4, model_name: 'Cloud Walker', price: '₹21,999', category: 'Performance', image_url: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=1974', star_rating: 4.9, stock_quantity: 5 },
     { id: 5, model_name: 'Midnight Pro', price: '₹24,999', category: 'Limited', image_url: 'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?q=80&w=1925', star_rating: 4.7, stock_quantity: 3 },
     { id: 6, model_name: 'Vortex Max', price: '₹16,499', category: 'Lifestyle', image_url: 'https://images.unsplash.com/photo-1512374382149-4332c6c021f1?q=80&w=1915', star_rating: 4.4, stock_quantity: 20 },
   ];
@@ -266,7 +269,7 @@ const Products = () => {
                     setSelectedProduct(product);
                     setIsModalOpen(true);
                   }}
-                  className="w-full mt-6 py-3 bg-black text-white text-[10px] font-bold uppercase tracking-[0.2em] rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-lg shadow-black/10"
+                  className="w-full mt-6 py-3 bg-black text-white text-[10px] font-bold uppercase tracking-[0.2em] rounded-xl opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-300 shadow-lg shadow-black/10"
                 >
                   SHOP NOW
                 </motion.button>
