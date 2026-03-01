@@ -23,7 +23,7 @@ const DEFAULT_SHOES: Shoe[] = [
   {
     id: 1,
     model_name: "VELOCITY ELITE",
-    price: "$240",
+    price: "₹1240",
     image_url: "https://www.pngplay.com/wp-content/uploads/6/Adidas-Shoes-Sneakers-Transparent-PNG.png",
     color: "from-blue-500 to-purple-600",
     description: "Engineered for pure speed and ultimate comfort."
@@ -31,7 +31,7 @@ const DEFAULT_SHOES: Shoe[] = [
   {
     id: 2,
     model_name: "STREET PULSE",
-    price: "$180",
+    price: "₹1180",
     image_url: "https://png.pngtree.com/png-vector/20240715/ourmid/pngtree-sports-shoes-png-image_13082777.png",
     color: "from-orange-500 to-red-600",
     description: "The perfect blend of urban style and athletic performance."
@@ -39,7 +39,7 @@ const DEFAULT_SHOES: Shoe[] = [
   {
     id: 3,
     model_name: "FUTURE RUNNER",
-    price: "$320",
+    price: "₹1320",
     image_url: "https://file.aiquickdraw.com/imgcompressed/img/compressed_cc2b6c7d0c91c142817535bc16c459cd.webp",
     color: "from-emerald-400 to-cyan-500",
     description: "Next-generation technology for the modern athlete."
